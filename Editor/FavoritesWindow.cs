@@ -71,22 +71,20 @@ public class FavoritesWindow : EditorWindow
         else if (Event.current.type == EventType.DragPerform)
             Add(DragAndDrop.paths);
 
-        Vector2 entryPos = new Vector2(minWidth * 0.05f, 0f);
-        Vector2 entrySize = new Vector2(settings.EntryWidth, settings.EntryHeight);
-        Rect entryRect = new Rect(entryPos, entrySize);
-
+        //Layout calcs
+        Rect entryRect = new Rect(minWidth * 0.05f, 0f, settings.EntryWidth, settings.EntryHeight);
         Rect delBtnRect = new Rect(entryRect.position, entryRect.size);
         var pos = delBtnRect.position;
         var size = delBtnRect.size;
-        pos.x += entrySize.x * 0.5f + size.x * 0.5f;
+        pos.x += settings.EntryWidth * 0.5f + size.x * 0.5f;
         size.x *= settings.RemoveBtnWidthPercent;
         delBtnRect.size = size;
         delBtnRect.position = pos;
-
         var height = position.height;
         var scrollHeight = favorites.Paths.Count * entryRect.size.y * 1.2f;
         scrollviewRect = new Rect(0, settings.topPadding*2, minWidth - 10, height);
         int toggleWidth = 80;
+
         autoOpen = GUI.Toggle(new Rect(minWidth * 0.5f - toggleWidth * 0.5f, settings.topPadding * 0.5f, toggleWidth, settings.topPadding), autoOpen, "Auto Open");
         scrollPos = GUI.BeginScrollView(scrollviewRect, scrollPos, new Rect(0, settings.topPadding, minWidth, scrollHeight));
         {
@@ -105,6 +103,8 @@ public class FavoritesWindow : EditorWindow
                 {
                     Selection.activeObject = asset;
                     EditorGUIUtility.PingObject(asset);
+                    if (autoOpen)
+                        EditorUtility.OpenWithDefaultApp(path);
                 }
                 var col = GUI.backgroundColor;
                 GUI.backgroundColor = settings.RemoveButtonColor;
