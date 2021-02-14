@@ -154,7 +154,11 @@ public class FavoritesWindow : EditorWindow
         var splits = assetPath.Split('/');
         var last = splits[splits.Length - 1];
         var idxDot = last.IndexOf(".");
-        return last.Substring(0, idxDot);
+        if (idxDot >= 0)
+            return last.Substring(0, idxDot);
+        else
+            return last;
+
     }
 
     private Texture GetIcon(string path)
