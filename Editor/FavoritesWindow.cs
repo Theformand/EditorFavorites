@@ -74,10 +74,11 @@ public class FavoritesWindow : EditorWindow
         GUIStyle entryStyle = new GUIStyle(GUI.skin.button);
         entryStyle.alignment = TextAnchor.MiddleLeft;
         int scrollRectHeight = favorites.Paths.Count * settings.EntryHeight;
+        int toggleWidth = 90;
+        autoOpen = GUI.Toggle(new Rect(minWidth * 0.5f - (toggleWidth * 0.5f), 5, toggleWidth, 15), autoOpen, "Auto Open");
+        scrollviewRect = new Rect(0, 25, minWidth + 5, position.height * 0.95f);
 
-        scrollviewRect = new Rect(0, 0, minWidth + 5, scrollRectHeight);
-
-        scrollPos = GUI.BeginScrollView(scrollviewRect, scrollPos, new Rect(0, 0, 200, scrollRectHeight * 1.2f));
+        scrollPos = GUI.BeginScrollView(scrollviewRect, scrollPos, new Rect(0, 0, 200, scrollRectHeight));
         {
             for (int i = favorites.Paths.Count - 1; i >= 0; i--)
             {
@@ -95,7 +96,7 @@ public class FavoritesWindow : EditorWindow
                     Selection.activeObject = asset;
                     EditorGUIUtility.PingObject(asset);
                     if (autoOpen)
-                        EditorUtility.OpenWithDefaultApp("");
+                        EditorUtility.OpenWithDefaultApp(path);
                 }
                 var col = GUI.backgroundColor;
                 GUI.backgroundColor = settings.RemoveButtonColor;
