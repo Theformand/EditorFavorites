@@ -7,11 +7,18 @@ public class FavoritesWindow : EditorWindow
 {
     private Favorites favorites;
     private const string PREFS_ID = "favorites_assetpaths";
-    private static int minWidth = 235;
+    private static int minWidth = 245;
     private FavoritesWindSettings settings;
 
     private Vector2 scrollPos;
     private Rect scrollviewRect;
+    private GUIStyle entryStyle;
+    private bool autoOpen;
+
+    //Hot loop vars
+    private string path;
+    private Texture icon;
+    private Object asset;
 
     // Add menu named "My Window" to the Window menu
     [MenuItem("Tools/Favorites")]
@@ -53,6 +60,12 @@ public class FavoritesWindow : EditorWindow
         if (settings == null)
             LoadSettings();
 
+        if (entryStyle == null)
+        {
+            entryStyle = new GUIStyle(GUI.skin.button);
+            entryStyle.alignment = TextAnchor.MiddleLeft;
+        }
+
         if (Event.current.type == EventType.DragUpdated)
             DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
         else if (Event.current.type == EventType.DragPerform)
@@ -70,20 +83,19 @@ public class FavoritesWindow : EditorWindow
         delBtnRect.size = size;
         delBtnRect.position = pos;
 
-        GUIStyle entryStyle = new GUIStyle(GUI.skin.button);
-        entryStyle.alignment = TextAnchor.MiddleLeft;
-        int scrollRectHeight = favorites.Paths.Count * settings.EntryHeight;
-
-        scrollviewRect = new Rect(0, 0, minWidth + 5, scrollRectHeight);
-
-        scrollPos = GUI.BeginScrollView(scrollviewRect, scrollPos, new Rect(0, 0, 200, scrollRectHeight * 1.2f));
+        var height = position.height;
+        var scrollHeight = favorites.Paths.Count * entryRect.size.y * 1.2f;
+        scrollviewRect = new Rect(0, settings.topPadding*2, minWidth - 10, height);
+        int toggleWidth = 80;
+        autoOpen = GUI.Toggle(new Rect(minWidth * 0.5f - toggleWidth * 0.5f, settings.topPadding * 0.5f, toggleWidth, settings.topPadding), autoOpen, "Auto Open");
+        scrollPos = GUI.BeginScrollView(scrollviewRect, scrollPos, new Rect(0, settings.topPadding, minWidth, scrollHeight));
         {
             for (int i = favorites.Paths.Count - 1; i >= 0; i--)
             {
-                string path = favorites.Paths[i];
-                var icon = favorites.Icons[i];
-                string name = favorites.Names[i];
-                var asset = AssetDatabase.LoadAssetAtPath<Object>(path);
+                path = favorites.Paths[i];
+                icon = favorites.Icons[i];
+                name = favorites.Names[i];
+                asset = AssetDatabase.LoadAssetAtPath<Object>(path);
                 float posY = settings.topPadding + i * (settings.EntryHeight + settings.EntrySpacing);
                 entryRect.y = posY;
                 delBtnRect.y = posY;
@@ -124,6 +136,7 @@ public class FavoritesWindow : EditorWindow
         favorites.Names.RemoveAt(idx);
         Save();
     }
+
     private void LoadSettings()
     {
         var guids = AssetDatabase.FindAssets("FavoritesWindowSettings");

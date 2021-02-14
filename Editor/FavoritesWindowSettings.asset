@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 269a0a10ce4e99a44a1540a4e9af2509, type: 3}
   m_Name: FavoritesWindowSettings
   m_EditorClassIdentifier: 
-  topPadding: 12
+  topPadding: 15
   EntryHeight: 28
   EntryWidth: 185
   EntrySpacing: 3
   RemoveBtnWidthPercent: 0.15
-  RemoveButtonColor: {r: 1, g: 0, b: 0, a: 1}
+  RemoveButtonColor: {r: 1, g: 0.3537736, b: 0.3537736, a: 1}
