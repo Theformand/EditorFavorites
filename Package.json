@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "displayName": "Editor Favorites",
   "description": "Drag n drop your favorite assets into a Favorites bar for quick access",
-  "unity": "2019.4.17",
-  "unityRelease": "f1"
+  "unity": "2019.4"
  ,
  "keywords": [
     "editor",

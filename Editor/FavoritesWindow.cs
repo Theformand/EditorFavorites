@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using Object = UnityEngine.Object;
 using Assets.Scripts.Editor;
@@ -10,6 +9,9 @@ public class FavoritesWindow : EditorWindow
     private const string PREFS_ID = "favorites_assetpaths";
     private static int minWidth = 235;
     private FavoritesWindSettings settings;
+
+    private Vector2 scrollPos;
+    private Rect scrollviewRect;
 
     // Add menu named "My Window" to the Window menu
     [MenuItem("Tools/Favorites")]
@@ -24,7 +26,7 @@ public class FavoritesWindow : EditorWindow
     public void OnEnable()
     {
         LoadSettings();
-        Load(); 
+        Load();
     }
 
     private void OnDestroy()
@@ -70,31 +72,38 @@ public class FavoritesWindow : EditorWindow
 
         GUIStyle entryStyle = new GUIStyle(GUI.skin.button);
         entryStyle.alignment = TextAnchor.MiddleLeft;
+        int scrollRectHeight = favorites.Paths.Count * settings.EntryHeight;
 
-        for (int i = favorites.Paths.Count - 1; i >= 0; i--)
+        scrollviewRect = new Rect(0, 0, minWidth + 5, scrollRectHeight);
+
+        scrollPos = GUI.BeginScrollView(scrollviewRect, scrollPos, new Rect(0, 0, 200, scrollRectHeight * 1.2f));
         {
-            string path = favorites.Paths[i];
-            var icon = favorites.Icons[i];
-            string name = favorites.Names[i];
-            var asset = AssetDatabase.LoadAssetAtPath<Object>(path);
-            float posY = settings.topPadding + i * (settings.EntryHeight + settings.EntrySpacing);
-            entryRect.y = posY;
-            delBtnRect.y = posY;
-
-
-            if (GUI.Button(entryRect, new GUIContent(name, icon), entryStyle))
+            for (int i = favorites.Paths.Count - 1; i >= 0; i--)
             {
-                Selection.activeObject = asset;
-                EditorGUIUtility.PingObject(asset);
+                string path = favorites.Paths[i];
+                var icon = favorites.Icons[i];
+                string name = favorites.Names[i];
+                var asset = AssetDatabase.LoadAssetAtPath<Object>(path);
+                float posY = settings.topPadding + i * (settings.EntryHeight + settings.EntrySpacing);
+                entryRect.y = posY;
+                delBtnRect.y = posY;
+
+
+                if (GUI.Button(entryRect, new GUIContent(name, icon), entryStyle))
+                {
+                    Selection.activeObject = asset;
+                    EditorGUIUtility.PingObject(asset);
+                }
+                var col = GUI.backgroundColor;
+                GUI.backgroundColor = settings.RemoveButtonColor;
+
+                if (GUI.Button(delBtnRect, "X"))
+                    Remove(i);
+
+                GUI.backgroundColor = col;
             }
-            var col = GUI.backgroundColor;
-            GUI.backgroundColor = settings.RemoveButtonColor;
-
-            if (GUI.Button(delBtnRect, "X"))
-                Remove(i);
-
-            GUI.backgroundColor = col;
         }
+        GUI.EndScrollView();
     }
 
     private void Add(string[] paths)
