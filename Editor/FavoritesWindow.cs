@@ -12,6 +12,7 @@ public class FavoritesWindow : EditorWindow
 
     private Vector2 scrollPos;
     private Rect scrollviewRect;
+    private bool autoOpen;
 
     // Add menu named "My Window" to the Window menu
     [MenuItem("Tools/Favorites")]
@@ -93,6 +94,8 @@ public class FavoritesWindow : EditorWindow
                 {
                     Selection.activeObject = asset;
                     EditorGUIUtility.PingObject(asset);
+                    if (autoOpen)
+                        EditorUtility.OpenWithDefaultApp("");
                 }
                 var col = GUI.backgroundColor;
                 GUI.backgroundColor = settings.RemoveButtonColor;
@@ -141,7 +144,11 @@ public class FavoritesWindow : EditorWindow
         var splits = assetPath.Split('/');
         var last = splits[splits.Length - 1];
         var idxDot = last.IndexOf(".");
-        return last.Substring(0, idxDot);
+        if (idxDot >= 0)
+            return last.Substring(0, idxDot);
+        else
+            return last;
+
     }
 
     private Texture GetIcon(string path)
