@@ -7,6 +7,7 @@ public class FavoritesWindow : EditorWindow
 {
     private Favorites favorites;
     private const string PREFS_ID = "favorites_assetpaths";
+    private const string AUTO_OPEN_ID = "auto_open";
     private static int minWidth = 245;
     private FavoritesWindSettings settings;
 
@@ -44,6 +45,7 @@ public class FavoritesWindow : EditorWindow
     private void Save()
     {
         EditorPrefs.SetString(PREFS_ID, JsonUtility.ToJson(favorites));
+        EditorPrefs.SetBool(AUTO_OPEN_ID, autoOpen);
     }
 
     private void Load()
@@ -147,6 +149,7 @@ public class FavoritesWindow : EditorWindow
             settings = CreateInstance<FavoritesWindSettings>();
             AssetDatabase.CreateAsset(settings, "FavoritesWindowSettings.asset");
         }
+        autoOpen = EditorPrefs.GetBool(AUTO_OPEN_ID);
     }
 
     public static string AssetPathToAssetName(string assetPath)
