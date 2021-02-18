@@ -35,6 +35,7 @@ public class FavoritesWindow : EditorWindow
     {
         LoadSettings();
         Load();
+        RefreshIcons();
     }
 
     private void OnDestroy()
@@ -118,6 +119,14 @@ public class FavoritesWindow : EditorWindow
             }
         }
         GUI.EndScrollView();
+    }
+
+    private void RefreshIcons()
+    {
+        for (int i = 0; i < favorites.Paths.Count; i++)
+        {
+            favorites.Icons[i] = GetIcon(favorites.Paths[i]);
+        }
     }
 
     private void Add(string[] paths)
